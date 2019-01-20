@@ -1,0 +1,95 @@
+syntax = "proto3";
+package v1;
+
+import "google/protobuf/timestamp.proto";
+
+message ToDo {
+    int64 id = 1;
+    
+    // Title of the task
+    string title = 2;
+
+    string description = 3;
+
+    // Date and time to remind the todo task
+    google.protobuf.Timestamp reminder = 4;
+}
+
+message CreateRequest {
+    // API versioning
+    string api = 1;
+
+    // Task entity to add
+    ToDo toDo = 2;
+}
+
+message CreateResponse {
+    string api = 1;
+
+    // ID of created task
+    int64 id = 2;
+}
+
+message ReadRequest {
+    string api = 1;
+
+    // Task's ID
+    int64 id = 2;
+}
+
+message ReadResponse {
+    string api = 1;
+
+    ToDo toDo = 2;
+}
+
+message UpdateRequest {
+    string api = 1;
+
+    ToDo toDo = 2;
+}
+
+message UpdateResponse {
+    string api = 1;
+
+    // Contains number of entities have been updated
+    // Equals 1 in case of successfull update
+    int64 updated = 2;
+}
+
+message DeleteRequest {
+    string api = 1;
+
+    // Task's ID to be deleted
+    int64 id = 2;
+}
+
+message DeleteResponse {
+    string api = 1;
+
+    // Equals 1 in case of successful delete
+    int64 deleted = 2;
+}
+
+message ReadAllRequest {
+    string api = 1;
+}
+
+message ReadAllResponse {
+    string api = 1;
+
+    // List of all todo tasks
+    repeated ToDo toDos = 2;
+}
+
+service ToDoService {
+    rpc Create(CreateRequest) returns (CreateResponse);
+
+    rpc Read(ReadRequest) returns (ReadResponse);
+
+    rpc Update(UpdateRequest) returns (UpdateResponse);
+
+    rpc Delete(DeleteRequest) returns (DeleteResponse);
+
+    rpc ReadAll(ReadAllRequest) returns (ReadAllResponse);
+}
