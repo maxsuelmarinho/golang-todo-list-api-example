@@ -9,11 +9,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/maxsuelmarinho/golang-todo-list-api-example/pkg/protocol/grpc"
+	"github.com/maxsuelmarinho/golang-todo-list-api-example/pkg/protocol/rest"
 	v1 "github.com/maxsuelmarinho/golang-todo-list-api-example/pkg/service/v1"
 )
 
 type Config struct {
 	GRPCPort            string
+	HTTPPort            string
 	DatastoreDBHost     string
 	DatastoreDBUser     string
 	DatastoreDBPassword string
@@ -25,6 +27,7 @@ func RunServer() error {
 
 	var cfg Config
 	flag.StringVar(&cfg.GRPCPort, "grpc-port", "", "gRPC port to bind")
+	flag.StringVar(&cfg.HTTPPort, "http-port", "", "HTTP port to bind")
 	flag.StringVar(&cfg.DatastoreDBHost, "db-host", "", "Database host")
 	flag.StringVar(&cfg.DatastoreDBUser, "db-user", "", "Database user")
 	flag.StringVar(&cfg.DatastoreDBPassword, "db-password", "", "Database password")
@@ -33,6 +36,10 @@ func RunServer() error {
 
 	if len(cfg.GRPCPort) == 0 {
 		return fmt.Errorf("invalid TCP port for gRPC server: '%s'", cfg.GRPCPort)
+	}
+
+	if len(cfg.HTTPPort) == 0 {
+		return fmt.Errorf("invalid TCP port for HTTP gateway: '%s'", cfg.HTTPPort)
 	}
 
 	// add MySQL driver specific parameter to parse date/time
@@ -52,6 +59,10 @@ func RunServer() error {
 	defer db.Close()
 
 	v1API := v1.NewToDoServiceServer(db)
+
+	go func() {
+		_ = rest.RunServer(ctx, cfg.GRPCPort, cfg.HTTPPort)
+	}()
 
 	return grpc.RunServer(ctx, v1API, cfg.GRPCPort)
 
