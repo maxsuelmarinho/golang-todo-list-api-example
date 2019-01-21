@@ -24,7 +24,7 @@
 ```
 > cd cmd/server
 > go build
-> server -grpc-port=9090 -http-port=8080 -db-host=<host>:3306 -db-user=<user> -db-password=<password> -db-schema=<schema>
+> server -grpc-port=9090 -http-port=8080 -db-host=<host>:3306 -db-user=<user> -db-password=<password> -db-schema=<schema> -log-level=-1 -log-time-format=2006-01-02T15:04:05.999999999Z07:00
 ```
 
 **Start Client:**

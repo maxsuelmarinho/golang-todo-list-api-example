@@ -1,0 +1,3 @@
+/cmd/server/server
+/cmd/client-rest/client-rest
+/cmd/client-grpc/client-grpc
